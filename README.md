@@ -46,6 +46,11 @@ Desenvolver conhecimento de Data Science investigando as principais linhas de on
     python src/etl.py
     ```
 
+7.  **Instale o Streamlit:**
+    ```bash
+    pip install streamlit
+    ```
+
 7.  **Execute o Dashboard:**
     ```bash
     streamlit run dashboard.py
