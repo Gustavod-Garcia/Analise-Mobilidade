@@ -7,7 +7,7 @@ import os
 
 # --- Configuração da Página e Conexão ---
 st.set_page_config(layout="wide")
-st.title("Análise da Mobilidade Urbana - SPTrans 🚍")
+st.title("Análise da Mobilidade Urbana - SPTrans")
 # Carregar variáveis de ambiente (do arquivo .env)
 load_dotenv() 
 DB_USER = os.getenv('DB_USER', 'gustavo')
