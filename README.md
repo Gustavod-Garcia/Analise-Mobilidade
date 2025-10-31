@@ -31,7 +31,7 @@ Desenvolver conhecimento de Data Science investigando as principais linhas de on
     * Crie um arquivo `.env` na raiz do projeto (veja `.env.example` se tiver um) com suas credenciais do banco.
 
 5.  **Baixe os Dados:**
-    (Rode o script de download)
+    (Rode o script de download ou acesse o link para dowload manual)
     ```bash
     python src/download_sptrans.py
     ```
