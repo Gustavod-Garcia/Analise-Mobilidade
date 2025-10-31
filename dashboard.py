@@ -5,13 +5,9 @@ from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
 
-# --- 1. Configuração da Página e Conexão ---
-# Usar a página inteira
+# --- Configuração da Página e Conexão ---
 st.set_page_config(layout="wide")
-
-# Título do Dashboard
 st.title("Análise da Mobilidade Urbana - SPTrans 🚍")
-
 # Carregar variáveis de ambiente (do arquivo .env)
 load_dotenv() 
 DB_USER = os.getenv('DB_USER', 'gustavo')
@@ -35,8 +31,8 @@ def get_engine():
 engine = get_engine()
 
 
-# --- 2. Carregamento de Dados com Cache ---
-# O @st.cache_data garante que só vamos rodar isso uma vez
+# --- Carregamento de Dados com Cache ---
+# O @st.cache_data garantiu que só vamos rodar isso uma vez
 @st.cache_data
 def carregar_dados():
     print("Carregando dados do banco...")
@@ -60,7 +56,7 @@ with st.spinner('Carregando dados do banco... Isso pode levar um minuto.'):
     df_routes, df_trips, df_stops, df_stop_times, df_shapes = carregar_dados()
 
 
-# --- 3. Filtrar Dados de Ônibus (Lógica de Negócio) ---
+# --- Filtrar Dados de Ônibus (Lógica de Negócio) ---
 @st.cache_data
 def processar_dados_onibus(_df_routes, _df_trips, _df_stops, _df_stop_times):
     print("Processando dados de ônibus...")
@@ -83,7 +79,7 @@ def processar_dados_onibus(_df_routes, _df_trips, _df_stops, _df_stop_times):
     df_paradas_populares = df_paradas_populares.sort_values(by='total_passagens', ascending=False)
     
     # Análise de Pico vs. Vale
-    df_stoptimes_onibus = df_stoptimes_onibus.copy() # Evitar SettingWithCopyWarning
+    df_stoptimes_onibus = df_stoptimes_onibus.copy()
     df_stoptimes_onibus['hora_str'] = df_stoptimes_onibus['departure_time'].str.slice(0, 2)
     df_stoptimes_onibus['hora_int'] = pd.to_numeric(df_stoptimes_onibus['hora_str'])
     df_stoptimes_onibus['hora_do_dia'] = df_stoptimes_onibus['hora_int'] % 24
@@ -98,16 +94,14 @@ with st.spinner('Processando dados de análise...'):
     df_linhas, df_paradas, df_horarios = processar_dados_onibus(df_routes, df_trips, df_stops, df_stop_times)
 
 
-# --- 4. Layout do Dashboard ---
-
-# --- Seção 1: Métricas Principais ---
+# --- Layout do Dashboard - Métricas Principais ---
 st.header("Visão Geral do Sistema de Ônibus")
 col1, col2, col3 = st.columns(3)
 col1.metric("Linhas de Ônibus", len(df_linhas))
 col2.metric("Paradas de Ônibus", len(df_paradas))
 col3.metric("Total de Partidas Analisadas", df_horarios['total_partidas'].sum())
 
-# --- Seção 2: Análise de Pico vs. Vale ---
+# --- Análise de Pico vs. Vale ---
 st.header("Distribuição de Partidas ao Longo do Dia")
 fig_horarios = px.bar(
     df_horarios,
@@ -119,7 +113,7 @@ fig_horarios.update_layout(xaxis = dict(tickmode = 'linear', tick0 = 0, dtick = 
 st.plotly_chart(fig_horarios, use_container_width=True)
 
 
-# --- Seção 3: Análises de Linhas e Paradas ---
+# --- Análises de Linhas e Paradas ---
 st.header("Linhas e Paradas Mais Movimentadas")
 col_linhas, col_paradas = st.columns(2)
 
@@ -132,12 +126,10 @@ with col_paradas:
     st.dataframe(df_paradas[['stop_name', 'total_passagens']].head(15))
 
 
-# --- Seção 4: Análise Geoespacial Interativa ---
+# --- Análise Geoespacial Interativa ---
 st.header("Análise Geoespacial")
-
 # Opção de Mapa (Heatmap ou Traçado)
-mapa_tipo = st.radio("Selecione a visualização do mapa:", 
-                     ('Mapa de Calor das Paradas', 'Traçado de Linha Específica'))
+mapa_tipo = st.radio("Selecione a visualização do mapa:", ('Mapa de Calor das Paradas', 'Traçado de Linha Específica'))
 
 if mapa_tipo == 'Mapa de Calor das Paradas':
     st.subheader("Mapa de Calor Interativo (Top 1000 Paradas)")
@@ -180,7 +172,6 @@ else:
             center={"lat": df_trajeto['shape_pt_lat'].mean(), "lon": df_trajeto['shape_pt_lon'].mean()},
             mapbox_style="open-street-map"
         )
-        # Mudar a cor da linha (como você pediu)
         fig_linha.update_traces(line=dict(color='red', width=3))
         fig_linha.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
         st.plotly_chart(fig_linha, use_container_width=True)
