@@ -2,6 +2,10 @@
 
 Este projeto analisa dados públicos de GTFS da SPTrans, carrega-os em um banco de dados PostgreSQL e apresenta as descobertas em um dashboard interativo feito com Streamlit.
 
+## Objetivo
+
+Desenvolver conhecimento de Data Science investigando as principais linhas de onibus e caminhos percorridos na capital paulista.  
+
 ## Como Executar o Projeto
 
 1.  **Clone o repositório:**
