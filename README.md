@@ -2,7 +2,7 @@
 
 Este projeto analisa dados públicos de GTFS da SPTrans, carrega-os em um banco de dados PostgreSQL e apresenta as descobertas em um dashboard interativo feito com Streamlit.
 
-## 🚀 Como Executar o Projeto
+## Como Executar o Projeto
 
 1.  **Clone o repositório:**
     ```bash
