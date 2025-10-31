@@ -11,8 +11,7 @@ load_dotenv()
 class GTFSLoader:
     def __init__(self):
         """Inicializa a conexão com o banco de dados"""
-        # (O __init__ é o mesmo, vai ler o .env que criamos)
-        db_user = os.getenv('DB_USER', 'gustavo') # Mudei o padrão para gustavo
+        db_user = os.getenv('DB_USER', 'gustavo')
         db_password = os.getenv('DB_PASSWORD', '')
         db_host = os.getenv('DB_HOST', 'localhost')
         db_port = os.getenv('DB_PORT', '5432')
@@ -27,11 +26,11 @@ class GTFSLoader:
         self.engine = create_engine(connection_string)
         self.data_dir = Path('data/raw')
         
-        print(f"✅ Conexão estabelecida com {db_name} como usuário {db_user}")
+        print(f" Conexão estabelecida com {db_name} como usuário {db_user}")
     
     def truncate_tables(self):
         """Limpa todas as tabelas mantendo a estrutura (O MÉTODO CORRETO)"""
-        print("\n🧹 Limpando tabelas existentes...")
+        print("\n Limpando tabelas existentes...")
         
         with self.engine.connect() as conn:
             # Desabilitar foreign keys temporariamente
@@ -40,95 +39,95 @@ class GTFSLoader:
             tables = ['stop_times', 'trips', 'routes', 'stops', 'agency', 'calendar', 'shapes']
             for table in tables:
                 conn.execute(text(f"TRUNCATE TABLE {table} CASCADE;"))
-                print(f"   ✓ {table} limpa")
+                print(f"   {table} limpa")
             
             # Reabilitar foreign keys
             conn.execute(text("SET session_replication_role = 'origin';"))
             conn.commit()
         
-        print("✅ Tabelas limpas com sucesso!")
+        print(" Tabelas limpas com sucesso!")
     
     def load_agency(self):
         """Carrega dados da operadora"""
-        print("\n📋 Carregando agency.txt...")
+        print("\n Carregando agency.txt...")
         df = pd.read_csv(self.data_dir / 'agency.txt')
-        df.to_sql('agency', self.engine, if_exists='append', index=False) # <-- 'append'
-        print(f"   ✅ {len(df)} registros carregados")
+        df.to_sql('agency', self.engine, if_exists='append', index=False) 
+        print(f"   {len(df)} registros carregados")
         return len(df)
     
     def load_routes(self):
         """Carrega dados das linhas"""
-        print("\n🚍 Carregando routes.txt...")
+        print("\n Carregando routes.txt...")
         df = pd.read_csv(self.data_dir / 'routes.txt')
-        df.to_sql('routes', self.engine, if_exists='append', index=False) # <-- 'append'
-        print(f"   ✅ {len(df)} linhas carregadas")
+        df.to_sql('routes', self.engine, if_exists='append', index=False)
+        print(f"   {len(df)} linhas carregadas")
         return len(df)
     
     def load_stops(self):
         """Carrega dados das paradas"""
-        print("\n📍 Carregando stops.txt...")
+        print("\n Carregando stops.txt...")
         df = pd.read_csv(self.data_dir / 'stops.txt')
-        df.to_sql('stops', self.engine, if_exists='append', index=False) # <-- 'append'
-        print(f"   ✅ {len(df)} paradas carregadas")
+        df.to_sql('stops', self.engine, if_exists='append', index=False) 
+        print(f"   {len(df)} paradas carregadas")
         return len(df)
     
     def load_trips(self):
         """Carrega dados das viagens"""
-        print("\n🚌 Carregando trips.txt...")
+        print("\n Carregando trips.txt...")
         df = pd.read_csv(self.data_dir / 'trips.txt')
-        df.to_sql('trips', self.engine, if_exists='append', index=False) # <-- 'append'
-        print(f"   ✅ {len(df)} viagens carregadas")
+        df.to_sql('trips', self.engine, if_exists='append', index=False) 
+        print(f"   {len(df)} viagens carregadas")
         return len(df)
     
     def load_stop_times(self):
         """Carrega dados dos horários (em lotes para arquivos grandes)"""
-        print("\n⏰ Carregando stop_times.txt...")
+        print("\n Carregando stop_times.txt...")
         file_path = self.data_dir / 'stop_times.txt'
         
         chunksize = 50000
         total_rows = 0
         
         for i, chunk in enumerate(pd.read_csv(file_path, chunksize=chunksize)):
-            chunk.to_sql('stop_times', self.engine, if_exists='append', index=False) # <-- 'append'
+            chunk.to_sql('stop_times', self.engine, if_exists='append', index=False) 
             total_rows += len(chunk)
             print(f"   Processando... {total_rows:,} registros", end='\r')
         
-        print(f"\n   ✅ {total_rows:,} horários carregados")
+        print(f"\n   {total_rows:,} horários carregados")
         return total_rows
     
     def load_calendar(self):
         """Carrega dados do calendário"""
-        print("\n📅 Carregando calendar.txt...")
+        print("\n Carregando calendar.txt...")
         df = pd.read_csv(self.data_dir / 'calendar.txt')
         
-        # Converter datas de YYYYMMDD para YYYY-MM-DD
+        # Convertendo datas de YYYYMMDD para YYYY-MM-DD
         df['start_date'] = pd.to_datetime(df['start_date'], format='%Y%m%d')
         df['end_date'] = pd.to_datetime(df['end_date'], format='%Y%m%d')
         
-        df.to_sql('calendar', self.engine, if_exists='append', index=False) # <-- 'append'
-        print(f"   ✅ {len(df)} registros de calendário carregados")
+        df.to_sql('calendar', self.engine, if_exists='append', index=False)
+        print(f"   {len(df)} registros de calendário carregados")
         return len(df)
     
     def load_shapes(self):
         """Carrega dados das rotas (shapes) em lotes"""
-        print("\n🗺️  Carregando shapes.txt (arquivo grande, pode demorar)...")
+        print("\n  Carregando shapes.txt (arquivo grande, pode demorar)...")
         file_path = self.data_dir / 'shapes.txt'
         
         chunksize = 100000
         total_rows = 0
         
         for i, chunk in enumerate(pd.read_csv(file_path, chunksize=chunksize)):
-            chunk.to_sql('shapes', self.engine, if_exists='append', index=False) # <-- 'append'
+            chunk.to_sql('shapes', self.engine, if_exists='append', index=False)
             total_rows += len(chunk)
             print(f"   Processando... {total_rows:,} registros", end='\r')
         
-        print(f"\n   ✅ {total_rows:,} pontos de rota carregados")
+        print(f"\n   {total_rows:,} pontos de rota carregados")
         return total_rows
     
     def load_all(self):
         """Carrega todos os dados"""
         print("=" * 60)
-        print("🚀 INICIANDO PROCESSO DE ETL - GTFS SPTRANS")
+        print(" INICIANDO PROCESSO DE ETL - GTFS SPTRANS")
         print("=" * 60)
         
         stats = {}
@@ -146,9 +145,9 @@ class GTFSLoader:
             stats['shapes'] = self.load_shapes()
             
             print("\n" + "=" * 60)
-            print("✅ ETL CONCLUÍDO COM SUCESSO!")
+            print(" ETL CONCLUÍDO COM SUCESSO!")
             print("=" * 60)
-            print("\n📊 Resumo:")
+            print("\n Resumo:")
             for table, count in stats.items():
                 print(f"   {table:15} → {count:,} registros")
             print("=" * 60)
@@ -156,7 +155,7 @@ class GTFSLoader:
             return True
             
         except Exception as e:
-            print(f"\n❌ Erro durante o ETL: {e}")
+            print(f"\n Erro durante o ETL: {e}")
             return False
 
 if __name__ == "__main__":
