@@ -1,6 +1,4 @@
 -- Schema para dados GTFS da SPTrans
-
--- Tabela: Agency (Operadora)
 CREATE TABLE IF NOT EXISTS agency (
     agency_id VARCHAR(50) PRIMARY KEY,
     agency_name VARCHAR(255),
