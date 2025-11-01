@@ -6,6 +6,18 @@ Este projeto analisa dados públicos de GTFS da SPTrans, carrega-os em um banco 
 
 Desenvolver conhecimento de Data Science investigando as principais linhas de onibus e caminhos percorridos na capital paulista.  
 
+## Galeria do Projeto
+
+Uma prévia do dashboard interativo finalizado e das principais análises geoespaciais.
+
+| Visão Geral do Dashboard | Linhas e Paradas Mais Movimentadas |
+| :---: | :---: |
+| ![Visão Geral do Dashboard](img/dashboard_overview.png) | ![Linhas e Paradas Mais Movimentadas](img/overview_2.png) |
+| **Mapa de Traçado de Linha (Plotly)** | **Mapa de Calor Estático (Matplotlib)** |
+| ![Traçado da Linha 8000-10](img/heatmap_interativo.png) | ![Mapa de Calor Estático](img/tracado_linha.png) |
+
+--
+
 ## Como Executar o Projeto
 
 1.  **Clone o repositório:**
